@@ -69,7 +69,6 @@ const FaceScreen = () => {
   const  closeFaceCam=()=>{
           if(!togglefacecam){
             const videoTrack=stream?.getVideoTracks();
-
             setTimeout(()=>{
                 videoTrack?.forEach((track)=>{
                   track.stop();

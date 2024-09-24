@@ -7,21 +7,20 @@ import { useContextProvider } from '@/Context/Context'
 
 
 const Screen = () => {
-   const {toggleScreen,recordedURL,toggleRecordingButtons,setRecordingButtons}=useContextProvider();
-   const VideoRef=useRef<HTMLVideoElement|null>(null)
+   const {toggleScreen,recordedURL,toggleRecordingButtons,setRecordingButtons,toggleStartrecording,currentStream}=useContextProvider();
+    const VideoRef=useRef<HTMLVideoElement|null>(null)
 
    const handleRecordingToggle=()=>{
       setRecordingButtons(!toggleRecordingButtons);
    }
 
-   const ScreenDisplay=async()=>{
+   const ScreenDisplay=async(value:MediaStream|null)=>{
       try{
-          const stream=await navigator.mediaDevices.getDisplayMedia(
-            {video:true}
-          )
-
-          if(VideoRef.current){
-            VideoRef.current.srcObject=stream;
+          // const stream=await navigator.mediaDevices.getDisplayMedia(
+          //   {video:true}
+          // )
+          if(VideoRef.current && value!=null){
+            VideoRef.current.srcObject=value;
           }
 
       }catch(error){
@@ -30,12 +29,10 @@ const Screen = () => {
    }
 
   useEffect(()=>{
-      if(toggleScreen===true){
-        ScreenDisplay();
-      }
-  },[toggleScreen])
+    ScreenDisplay(currentStream);
+  },[currentStream])
 
-
+  console.log(recordedURL);
   return (
     <div className='flex'>
       <div>
@@ -48,7 +45,11 @@ const Screen = () => {
             </div>
             :
             <div className="h-[45rem] w-[85rem] rounded m-[1rem]">
-                <video className='rounded-md m-[1rem] ml-[3rem] absolute' ref={VideoRef} height={1200} width={1200} autoPlay playsInline />
+              {
+                 recordedURL===null ?  
+                  <video className='rounded-md m-[1rem] ml-[3rem] absolute' ref={VideoRef} height={1200} width={1200} autoPlay playsInline />
+                 :<video   className='rounded-md m-[1rem] ml-[3rem] absolute' src={recordedURL} height={1200} width={1200} controls />
+              }
             </div>
           } 
         </div>
