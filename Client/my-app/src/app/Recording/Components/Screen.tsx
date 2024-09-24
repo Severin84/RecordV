@@ -1,42 +1,40 @@
 "use client"
-import React, {  useState } from 'react'
+import React, {  useEffect, useRef} from 'react'
 import FaceScreen from './FaceScreen'
 import {Columns2, SquareX} from "lucide-react"
 import RecordingOption from './RecordingOption'
- //import { useReactMediaRecorder ,ReactMediaRecorder} from 'react-media-recorder'
- import { useContextProvider } from '@/Context/Context'
+import { useContextProvider } from '@/Context/Context'
 
 
 const Screen = () => {
-  const [toggleState,setToggleState]=useState<boolean>(true);
-  // const {mediaBlobUrl,status} = useReactMediaRecorder({screen:true,audio:false,video:false});
-   const {toggleScreen,recordedURL}=useContextProvider();
+   const {toggleScreen,recordedURL,toggleRecordingButtons,setRecordingButtons}=useContextProvider();
+   const VideoRef=useRef<HTMLVideoElement|null>(null)
 
-  const handleRecordingToggle=()=>{
-     setToggleState(!toggleState);
-  }
+   const handleRecordingToggle=()=>{
+      setRecordingButtons(!toggleRecordingButtons);
+   }
 
-  // const VideoPreview=({stream}:{stream:MediaStream})=>{
-  //    const videoRef=useRef<HTMLVideoElement>();
+   const ScreenDisplay=async()=>{
+      try{
+          const stream=await navigator.mediaDevices.getDisplayMedia(
+            {video:true}
+          )
 
-     
-     
-  //    useEffect(()=>{
-  //     if(videoRef.current && stream){
-  //       videoRef.current.srcObject=stream;
-  //     }
-  //     console.log(stream);
-  //     console.log(videoRef.current?.srcObject);
-  //    },[stream])
-      
-  //    if(!stream){
-  //       //console.log("got null")
-  //       return  null;
-  //    }
-  //    console.log("notnull")
-  //    return <video ref={videoRef} width={500} height={500} autoPlay controls/>
-  // }
- 
+          if(VideoRef.current){
+            VideoRef.current.srcObject=stream;
+          }
+
+      }catch(error){
+        console.log("something went wrong while Displaying the screen:",error)
+      }
+   }
+
+  useEffect(()=>{
+      if(toggleScreen===true){
+        ScreenDisplay();
+      }
+  },[toggleScreen])
+
 
   return (
     <div className='flex'>
@@ -47,27 +45,29 @@ const Screen = () => {
             <div className="h-[45rem] w-[85rem] bg-slate-500 rounded m-[1rem]">
                 <div>
                 </div>
-            </div>:
-            <div>
-              <video controls width={500} height={500} src={recordedURL}/>
+            </div>
+            :
+            <div className="h-[45rem] w-[85rem] rounded m-[1rem]">
+                <video className='rounded-md m-[1rem] ml-[3rem] absolute' ref={VideoRef} height={1200} width={1200} autoPlay playsInline />
             </div>
           } 
         </div>
-        <div className='mt-[-10rem] ml-[-1rem]'>
+        <div className='mt-[-11rem] ml-[-4rem] absolute'>
             <FaceScreen/>
         </div>
-        { toggleState &&
-          <div className='mt-[-43rem] ml-[70rem] bg-stone-600 h-[20rem] w-[15rem] rounded flex justify-center items-center'>
+        {toggleRecordingButtons &&
+          <div className='mt-[-43rem] ml-[70rem] bg-stone-600 h-[20rem] w-[15rem] rounded flex justify-center items-center absolute'>
               <RecordingOption/> 
           </div>
          }
       </div>
-      {   toggleState === true ?
-           <div className='mt-[1rem] cursor-pointer'>
+      {   toggleRecordingButtons === true ?
+         
+           <div className='mt-[1rem] ml-[87rem] cursor-pointer absolute'>
               <SquareX size={40} onClick={()=>handleRecordingToggle()}/>
            </div>
            :
-           <div className='mt-[1rem] cursor-pointer'>
+           <div className='mt-[1rem] ml-[87rem] cursor-pointer absolute'>
               <Columns2 size={40} onClick={()=>handleRecordingToggle()}/>
           </div>
       }

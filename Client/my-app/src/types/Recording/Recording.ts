@@ -12,4 +12,6 @@ export interface RecordingOptionState{
    setRecordedURL:React.Dispatch<React.SetStateAction<string>>,
    userCamRecordedURL:string|null,
    setUserCamRecordedURL:React.Dispatch<React.SetStateAction<string|null>>
+   toggleRecordingButtons:boolean,
+   setRecordingButtons:React.Dispatch<React.SetStateAction<boolean>>,
 }

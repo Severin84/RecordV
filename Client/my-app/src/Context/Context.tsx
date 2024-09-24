@@ -11,6 +11,7 @@ export const ContextProvider=({children}:{children:ReactNode})=>{
     const [toggleStartrecording,settoggleStartrecording]=useState<boolean>(false);
     const [recordedURL,setRecordedURL]=useState<string>("");
     const [userCamRecordedURL,setUserCamRecordedURL]=useState<string|null>(null);
+    const [toggleRecordingButtons,setRecordingButtons]=useState<boolean>(true);
     return(
         <Context.Provider 
           value={{
@@ -25,7 +26,9 @@ export const ContextProvider=({children}:{children:ReactNode})=>{
             recordedURL,
             setRecordedURL,
             userCamRecordedURL,
-            setUserCamRecordedURL
+            setUserCamRecordedURL,
+            toggleRecordingButtons,
+            setRecordingButtons
           }}>
             {children}
         </Context.Provider>

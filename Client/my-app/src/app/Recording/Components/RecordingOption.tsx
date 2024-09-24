@@ -11,7 +11,7 @@ const RecordingOption = () => {
     const UserVideoStream=useRef<MediaStream|null>(null);
     const UserVideoStreamRecording=useRef<MediaRecorder|null>(null);
     const userCamChunks=useRef<Array<Blob>>([]);
-    // const [userCamRecordedURL,setUserCamRecordedURL]=useState<string>("");
+
     const handleaudiotoggle=()=>{
         setToggleAudio(!toggleAudio);
     }
@@ -22,6 +22,7 @@ const RecordingOption = () => {
              const stream=await navigator.mediaDevices.getUserMedia({
                 video:true
              });
+
              UserVideoStream.current=stream;
              UserVideoStreamRecording.current=new MediaRecorder(stream);
              UserVideoStreamRecording.current.ondataavailable=(e)=>{
@@ -57,46 +58,44 @@ const RecordingOption = () => {
 
     const startRecording =async()=>{
         setToggleScreen(true);
-        try{
-            const stream=await navigator.mediaDevices.getDisplayMedia({
-                video:true
-            });
-            mediaStream.current=stream;
-            mediaRecording.current=new MediaRecorder(stream);
 
-            mediaRecording.current.ondataavailable=(e)=>{
-                if(e.data.size>0){
-                   chuncks.current.push(e?.data); 
-                }
-            };
+        // try{
+        //     const stream=await navigator.mediaDevices.getDisplayMedia({
+        //         video:true
+        //     });
+        //     mediaStream.current=stream;
+        //     mediaRecording.current=new MediaRecorder(stream);
 
-            mediaRecording.current.onstop=()=>{
-                const recordedBlob=new Blob(chuncks.current,{type:'video/webm'});
-                const url=URL.createObjectURL(recordedBlob);
-                setRecordedURL(url);
-                chuncks.current=[];
-            };
-             mediaRecording.current.start();
-        }catch(error){
-            setToggleScreen(false)
-            console.log("Error in screenRecord:",error);
-        }
+        //     mediaRecording.current.ondataavailable=(e)=>{
+        //         if(e.data.size>0){
+        //            chuncks.current.push(e?.data); 
+        //         }
+        //     };
+
+        //     mediaRecording.current.onstop=()=>{
+        //         const recordedBlob=new Blob(chuncks.current,{type:'video/webm'});
+        //         const url=URL.createObjectURL(recordedBlob);
+        //         setRecordedURL(url);
+        //         chuncks.current=[];
+        //     };
+        //      mediaRecording.current.start();
+        // }catch(error){
+          //  setToggleScreen(false)
+        //     console.log("Error in screenRecord:",error);
+        // }
     }
 
     const stopRecording=()=>{
         setToggleScreen(false);
-        if(mediaRecording.current && mediaRecording.current.state==='recording'){
-            mediaRecording.current.stop();
-        }
-        if(mediaStream.current){
-          mediaStream.current.getVideoTracks().forEach((Vtrack)=>{
-            Vtrack.stop();
-          })
-        }
+        // if(mediaRecording.current && mediaRecording.current.state==='recording'){
+        //     mediaRecording.current.stop();
+        // }
+        // if(mediaStream.current){
+        //   mediaStream.current.getVideoTracks().forEach((Vtrack)=>{
+        //     Vtrack.stop();
+        //   })
+        // }
     }
-    // const handlefacecamtoggle=()=>{
-    //     setTogglefacecam(!togglefacecam);
-    // }
 
     const handlestartrecordingtogle=()=>{
         settoggleStartrecording(!toggleStartrecording);
