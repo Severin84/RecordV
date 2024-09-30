@@ -15,5 +15,7 @@ export interface RecordingOptionState{
    toggleRecordingButtons:boolean,
    setRecordingButtons:React.Dispatch<React.SetStateAction<boolean>>,
    currentStream:MediaStream|null,
-   setCurrentStream:React.Dispatch<React.SetStateAction<MediaStream|null>>
+   setCurrentStream:React.Dispatch<React.SetStateAction<MediaStream|null>>,
+   audioRecordedBlob:Blob|null
+   setAudioRecordedBlob:React.Dispatch<React.SetStateAction<Blob|null>>
 }

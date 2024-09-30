@@ -12,7 +12,8 @@ export const ContextProvider=({children}:{children:ReactNode})=>{
     const [recordedURL,setRecordedURL]=useState<string|null>(null);
     const [userCamRecordedURL,setUserCamRecordedURL]=useState<string|null>(null);
     const [toggleRecordingButtons,setRecordingButtons]=useState<boolean>(true);
-    const [currentStream,setCurrentStream]=useState<MediaStream|null>(null)
+    const [currentStream,setCurrentStream]=useState<MediaStream|null>(null);
+    const [audioRecordedBlob,setAudioRecordedBlob]=useState<Blob|null>(null);
     return(
         <Context.Provider 
           value={{
@@ -31,7 +32,9 @@ export const ContextProvider=({children}:{children:ReactNode})=>{
             toggleRecordingButtons,
             setRecordingButtons,
             currentStream,
-            setCurrentStream
+            setCurrentStream,
+            audioRecordedBlob,
+            setAudioRecordedBlob
           }}>
             {children}
         </Context.Provider>

@@ -3,16 +3,19 @@ import React, { useRef, useState} from 'react';
 import {useRouter} from "next/navigation"
 
 const RecordingOption = () => {
-    const {toggleAudio,setToggleAudio,setToggleScreen,toggleScreen,setTogglefacecam,settoggleStartrecording,togglefacecam,toggleStartrecording,setRecordedURL,setUserCamRecordedURL,setCurrentStream,recordedURL}=useContextProvider();
+    const {toggleAudio,setToggleAudio,setToggleScreen,toggleScreen,setTogglefacecam,settoggleStartrecording,togglefacecam,toggleStartrecording,setRecordedURL,setUserCamRecordedURL,setCurrentStream,recordedURL,setAudioRecordedBlob}=useContextProvider();
     
     const mediaStream=useRef<MediaStream|null>(null);
     const mediaRecording=useRef<MediaRecorder|null>(null);
     const chuncks=useRef<Array<Blob>>([]);
+    const audioStream=useRef<MediaStream|null>(null)
+    const AudioRecording=useRef<MediaRecorder|null>(null)
+    const AudioChuncks=useRef<Array<Blob>>([]);
     const UserVideoStream=useRef<MediaStream|null>(null);
     const UserVideoStreamRecording=useRef<MediaRecorder|null>(null);
     const userCamChunks=useRef<Array<Blob>>([]);
     const [userAudio,setUserAudio]=useState<MediaStream|null>(null)
-
+    // const [audioRecordedURL,setAudioRecordedURL]=useState<string|null>(null);
     const router=useRouter();
 
     const Startaudio=async()=>{
@@ -58,9 +61,17 @@ const RecordingOption = () => {
                     ...micStream.getAudioTracks(),
                 ])
 
+                const combinedAudio=new MediaStream([
+                    ...stream.getAudioTracks(),
+                    ...micStream.getAudioTracks()
+                ])
+
+           
                 mediaStream.current=combinedStream;
                 setCurrentStream(combinedStream);
                 mediaRecording.current=new MediaRecorder(combinedStream);
+
+                AudioRecording.current=new MediaRecorder(combinedAudio)
 
                 mediaRecording.current.ondataavailable=(e)=>{
                     if(e.data.size>0){
@@ -68,23 +79,46 @@ const RecordingOption = () => {
                     }
                 };
 
+                AudioRecording.current.ondataavailable=(e)=>{
+                    if(e.data.size>0){
+                        AudioChuncks.current.push(e?.data);
+                    }
+                }
+
                 mediaRecording.current.onstop=()=>{
                     const recordedBlob=new Blob(chuncks.current,{type:'video/webp'});
                     const url=URL.createObjectURL(recordedBlob);
                     setRecordedURL(url);
-                    console.log(url);
+
+                    const audiorecordedBlob=new Blob(AudioChuncks.current,{type:'audio/webp'});
+                    // const audioURL=URL.createObjectURL(audiorecordedBlob);
+                    setAudioRecordedBlob(audiorecordedBlob);
+                    // console.log(url);
+                   
                     chuncks.current=[];
+                    AudioChuncks.current=[];
                 };
                 mediaRecording.current.start();
+                AudioRecording.current.start()
             }else{
+               
                const combinedStream=new MediaStream([
                         ...stream.getVideoTracks(),
                         ...stream.getAudioTracks(),
                 ])
-
+               
+                const combinedAudio=new MediaStream([
+                    ...stream.getAudioTracks(),
+                ])
+                
                 mediaStream.current=combinedStream;
+                
+                audioStream.current=combinedAudio;
                 setCurrentStream(combinedStream);
+
                 mediaRecording.current=new MediaRecorder(combinedStream);
+
+                AudioRecording.current=new MediaRecorder(combinedAudio)
 
                 mediaRecording.current.ondataavailable=(e)=>{
                     if(e.data.size>0){
@@ -92,14 +126,27 @@ const RecordingOption = () => {
                     }
                 };
 
+                AudioRecording.current.ondataavailable=(e)=>{
+                    if(e.data.size>0){
+                        AudioChuncks.current.push(e?.data);
+                    }
+                }
+               
                 mediaRecording.current.onstop=()=>{
                     const recordedBlob=new Blob(chuncks.current,{type:'video/webp'});
                     const url=URL.createObjectURL(recordedBlob);
                     setRecordedURL(url);
-                    console.log(url);
+                    // const audioURL=URL.createObjectURL(audiorecordedBlob);
                     chuncks.current=[];
                 };
                 mediaRecording.current.start();
+
+                AudioRecording.current.onstop=()=>{
+                    const audiorecordedBlob=new Blob(AudioChuncks.current,{type:'audio/webm'});
+                    setAudioRecordedBlob(audiorecordedBlob);
+                    AudioChuncks.current=[];
+                }
+                AudioRecording.current.start()
             }
             
         }catch(error){
@@ -120,6 +167,15 @@ const RecordingOption = () => {
               mediaStream.current.getAudioTracks().forEach((Atrack)=>{
                 Atrack.stop();
               })
+            }
+            
+            if(AudioRecording.current && AudioRecording.current.state==='recording'){
+                AudioRecording.current.stop()
+            }
+            if(audioStream.current){
+                audioStream.current.getAudioTracks().forEach((ATrack)=>{
+                    ATrack.stop();
+                })
             }
         },500)
         settoggleStartrecording(false);
