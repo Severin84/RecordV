@@ -7,7 +7,7 @@ import {HfInference} from "@huggingface/inference"
 
 const VideoReview = () => {
   const {recordedURL}=useContextProvider();
-  const hf=new HfInference('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');
+  const hf=new HfInference();
   
   // const AudioToText=async()=>{
   //   const result=await hf.automaticSpeechRecognition({
