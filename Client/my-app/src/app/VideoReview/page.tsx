@@ -1,10 +1,29 @@
+"use client"
 import React from 'react'
+import { useContextProvider } from '../../Context/Context';
+import {HfInference} from "@huggingface/inference"
+// import { readFileSync } from 'fs';
+
 
 const VideoReview = () => {
+  const {recordedURL}=useContextProvider();
+  const hf=new HfInference('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');
+  
+  // const AudioToText=async()=>{
+  //   const result=await hf.automaticSpeechRecognition({
+  //     model:'facebook/wav2vec2-large-960h-lv60-self',
+  //     data:readFileSync('')
+  //   })
+  // }
+  
   return (
     <div className='flex h-[48.9rem] w-[96rem] bg-amber-600'>
         <div className='h-[48.9rem] w-[96rem] bg-amber-300 '>
-            <div className='h-[24rem] w-[50rem] bg-emerald-500 m-auto absolute top-2 right-30 bottom-50 left-20'>Video</div>
+            <div className='h-[24rem] w-[50rem] bg-emerald-500 m-auto absolute top-2 right-30 bottom-50 left-20'>
+                {
+                   recordedURL!==null ?<video className='rounded-md  ml-[3.5rem] absolute' src={recordedURL}  height={680} width={680} autoPlay controls />:null
+                }
+            </div>
             <div className='h-[24rem] w-[50rem] bg-sky-500 m-auto absolute top-50 right-30 bottom-0 left-20'>Timestamp</div>
         </div>
         <div className='h-[48.9rem] w-[46rem] bg-lime-500'>

@@ -16,13 +16,13 @@ const Screen = () => {
 
    const ScreenDisplay=async(value:MediaStream|null)=>{
       try{
-          // const stream=await navigator.mediaDevices.getDisplayMedia(
-          //   {video:true}
-          // )
+         
+           
           if(VideoRef.current && value!=null){
+            console.log(value)
+            console.log(typeof(value))
             VideoRef.current.srcObject=value;
           }
-
       }catch(error){
         console.log("something went wrong while Displaying the screen:",error)
       }
@@ -46,9 +46,7 @@ const Screen = () => {
             :
             <div className="h-[45rem] w-[85rem] rounded m-[1rem]">
               {
-                 recordedURL===null ?  
                   <video className='rounded-md m-[1rem] ml-[3rem] absolute' ref={VideoRef} height={1200} width={1200} autoPlay playsInline />
-                 :<video   className='rounded-md m-[1rem] ml-[3rem] absolute' src={recordedURL} height={1200} width={1200} controls />
               }
             </div>
           } 
